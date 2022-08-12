@@ -1,11 +1,11 @@
-#include <stdio.h>				//user input and output
-#include <stdlib.h>				//for conversions such as rand and srand
-#include <string.h>				//for reading the length of strings
-#include <time.h>				//for time function
-#define charSIZE 100			//for constant character sizes
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#define charSIZE 100
 
-void gameFunction(char*, FILE *inFile); //function prototype for game function
-void resultsFile(FILE *inFile);	//function prototype for results file
+void gameFunction(char*, FILE *inFile);
+void resultsFile(FILE *inFile);
 
 void cls() {
 
@@ -19,28 +19,26 @@ void cls() {
 
 int main()
 {
-	cls();	//for clearing the console to make things neater, but for visual studio it is "cls" instead of "clear"
-	printf("\nProgram that operates as a hangman game. You will enter a nickname to be stored alongside your score in the scoreboard. Line 121 is where the game master can enter or edit the words to be randomly chosen in the game.\n");
+	cls();
+	printf("\nProgram that operates as a hangman game. You will enter a nickname to be stored alongside your score in the scoreboard.");
+	printf("\nLine 117 is where the game master can enter or edit the words to be randomly chosen in the game.\n");
 
-	int menuOption;						//for choosing menu option
-	char nickName[charSIZE];			//for setting a nickname
+	int menuOption;
+	char nickName[charSIZE];
 	FILE *inFile;
 	char welcomeMsg[] = "\nThank you for playing the Hangman Game!   \n";
-	char *msgPtr; 						//pointer variable
+	char *msgPtr;
 
+	msgPtr = welcomeMsg;
 
-	msgPtr = welcomeMsg; 				//stores the address of the array in msgPtr
-
-	//menu options
 	printf("\n1-- Begin Game\n");
 	printf("\n2-- View Scores\n");
 	printf("\n3-- Exit Program\n\n: ");
 	scanf("%d", &menuOption);
 
-	//input validation for menu
 	if (menuOption == 1)
 	{
-		while (getchar() != '\n') //ensure only the enter/return key can be input
+		while (getchar() != '\n')
 		{
 			printf("\nYou must press enter in order continue.\n");
 			getchar();
@@ -48,22 +46,21 @@ int main()
 		
 		cls();
 
-		for (int i = 0; i < strlen(welcomeMsg); i++)	//for printing welcome message
+		for (int i = 0; i < strlen(welcomeMsg); i++)
 		{
 			printf("%c", *(msgPtr + i));
 		}
 		
 		printf("\nEnter a nickname with no spaces: ");
-		fgets(nickName, charSIZE, stdin); 	//gets the string entered
+		fgets(nickName, charSIZE, stdin);
 
-		while ((*nickName == ' ') || (*nickName == '\t') || (*nickName == '\n'))							//for preventing spaces from being entered
+		while ((*nickName == ' ') || (*nickName == '\t') || (*nickName == '\n'))
 		{
 			printf("\nYou must enter a name with no spaces.\n");
 			printf("\nEnter a nickname: ");
 			fgets(nickName, charSIZE, stdin);
 		}
 
-		//for removing spaces from the nickname
 		for(int i = 0, j = 0; i < strlen(nickName); i++)
 		{
 			nickName[i-j] = nickName[i];
@@ -77,7 +74,7 @@ int main()
 
 		printf("\nPress enter or return to continue... ");
 
-		while (getchar() != '\n') //for pausing the loops
+		while (getchar() != '\n')
 		{
 			printf("\nYou must press enter in order continue.\n");
 			getchar();
@@ -85,20 +82,20 @@ int main()
 
 		cls();	
 
-		gameFunction(nickName, inFile);	//call the game function
+		gameFunction(nickName, inFile);
 
 	}
 	else if (menuOption == 2)
 	{
 		cls();
-		resultsFile(inFile); 			//call the results function and sends inFile to it
+		resultsFile(inFile);
 	}
 	else if (menuOption == 3)
 	{
-		exit(1); //exits the program
+		exit(1);
 	}
 	else if (menuOption != 1 || menuOption != 2 || menuOption != 3)
-	{	//input validation for menu choices
+	{
 		printf("\nPlease enter a number only between 1 - 3\n");			
 		printf("\nPress enter or return to continue...\n");
 		getchar();
@@ -116,16 +113,16 @@ int main()
 
 void gameFunction(char *nickName, FILE *inFile)
 {
-	srand(time(NULL)); //sets the seed of the random number generator algorithm used by rand()
+	srand(time(NULL));
 
 	//here the game master can enter 6 words to be randomly chosen for the game
-	char guessWords[][16] = { 							"break",
-														"void",
-														"struct",
-														"continue",
-														"union",
-														"quarantine"
-	}; //2D array where first index is for choosing a random word and the second is for specifying a max length for the strings
+	char guessWords[][16] = { 	"break",
+								"void",
+								"struct",
+								"continue",
+								"union",
+								"quarantine"
+	};
 	
 	printf("\n*For testing* The word bank to be randomly chosen from is:\n");
 
@@ -144,50 +141,52 @@ void gameFunction(char *nickName, FILE *inFile)
 
 	cls();	
 	
-	int randIndex = rand() % 6;	//generates a random number which will be used to choose a randon number in the array index
+	int randIndex = rand() % 6;
 
-	int numbLives = 5;   //total lives
-	int totalPoints = 0; //points awarded for correct guesses
-	int wrongGuess = 0; //for deducting points for wrong guesses
-	int letterAccu = 0; //for ending the game when all letters have been guessed
+	int numbLives = 5;
+	int totalPoints = 0;
+	int wrongGuess = 0;
+	int letterAccu = 0;
 
-	int wordLength = strlen(guessWords[randIndex]);   //reads the length of the chosen word
+	int wordLength = strlen(guessWords[randIndex]);
 
-	int guessedLetter[16] = {0, 0, 0, 0, 0, 0, 0, 0}; //where guessed letters will be stored
+	int guessedLetter[16] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-	int userQuit = 0;            //used for when the user quits the game early
+	int userQuit = 0;
 
-	int loopIndex = 0;           //used for looping through the array index
+	int loopIndex = 0;
 
-	char guessLetters[16];      //letters the user enters
-	char letterGuessed;         //for storing the user entered letter
+	char guessLetters[16];
+	char letterGuessed;
 
-	while (totalPoints < wordLength) //loops the game
+	while (totalPoints < wordLength)
 	{
 
-		if (totalPoints < 0)	//keeps score from going below zero
+		if (totalPoints < 0)
 		{
 			totalPoints = 0;
 		}
 
-		printf("\nChosen Word: %s | Index Number: %d | Word Length: %d\n", guessWords[randIndex], randIndex, wordLength); //for testing the program, can be commented out/removed		
-		printf("\nNote: The above is for testing the game. It can be removed on line 155 for a serious game.");
+		//for testing the program, can be commented out/removed
+		printf("\nChosen Word: %s | Index Number: %d | Word Length: %d\n", guessWords[randIndex], randIndex, wordLength);
+		printf("\nNote: The above is for testing the game. It can be removed or commented out on line 170 for a serious game.\n");
+		printf("\nIf you would like to end the game early, enter quit.");
 
 		printf("\n------------------------------------------------------\n");
 		printf("\n|New Turn|\n\nCurrent Player: %s\nHangman Word: ", nickName);
-		for (loopIndex = 0; loopIndex < wordLength; loopIndex++) //loops randomly through the first array index
+		for (loopIndex = 0; loopIndex < wordLength; loopIndex++)
 		{
-			if(guessedLetter[loopIndex] == 1) //if the array index for the chosen word has been activated
+			if(guessedLetter[loopIndex] == 1)
 			{
-				printf("%c", guessWords[randIndex][loopIndex]); //print character that was correctly guessed
+				printf("%c", guessWords[randIndex][loopIndex]);
 			}
 			else
 			{
-				printf("-");	//prints hyphens until a letter is correctly guessed			
+				printf("-");		
 			}
 			if (letterGuessed == guessWords[randIndex][loopIndex])
-			{ //if user entered a correct letter
-				guessedLetter[loopIndex] = 1; //activates the array index of the correct letter
+			{
+				guessedLetter[loopIndex] = 1;
 			}
 		}
 
@@ -197,41 +196,40 @@ void gameFunction(char *nickName, FILE *inFile)
 		printf("\nTotal Points: %d\n", totalPoints);
 		printf("\nCurrent letter number: %d\n", letterAccu);
 		printf("\nEnter a letter to be guessed: ");
-		fgets(guessLetters, 16, stdin); //gets the user entered letter
+		fgets(guessLetters, 16, stdin);
 
-		if (strncmp(guessLetters, "quit", 4) == 0)//if user enters quit
+		if (strncmp(guessLetters, "quit", 4) == 0)
 		{
 			userQuit = 1;
-			break;	//ends the loop
+			break;
 		}
 
-		letterGuessed = guessLetters[0]; //stores the guessed letter in the array
+		letterGuessed = guessLetters[0];
 
-		printf("\nLetter entered: %c", letterGuessed); //displays the entered letter
+		printf("\nLetter entered: %c", letterGuessed);
 
-		wrongGuess = totalPoints; //for subtracting lives and points if user entered wrong letter
+		wrongGuess = totalPoints;
 
-		//loops for when the correct letter is guessed until word length is reached
 		for (loopIndex = 0; loopIndex < wordLength; loopIndex++)
 		{
 			if(guessedLetter[loopIndex] == 1)
 			{
-				continue; //continues with the loop
+				continue;
 			}
 			if (letterGuessed == guessWords[randIndex][loopIndex])
-			{ //add points when correct letter guessed
-				guessedLetter[loopIndex] = 1; //activate array which holds the letter
-				totalPoints++;		//add one point
-				letterAccu++;		//accumulate letter counter
+			{
+				guessedLetter[loopIndex] = 1;
+				totalPoints++;
+				letterAccu++;
 
 
 			}
 		}
 
-		if (wrongGuess == totalPoints) //if wrong letter is entered
+		if (wrongGuess == totalPoints)
 		{
-			numbLives--; 		//deduct 1 life
-			totalPoints--;		//deduct 1 point 	
+			numbLives--;
+			totalPoints--;
 			printf("\n-------------------------------\n");	
 			printf("\nSorry, wrong guess!\n");
 			printf("\n-------------------------------\n");	
@@ -239,7 +237,7 @@ void gameFunction(char *nickName, FILE *inFile)
 			getchar();
 			cls();
 
-			if (numbLives == 0)	//ends game once all lives are gone
+			if (numbLives == 0)
 			{
 				break;
 			}
@@ -257,16 +255,17 @@ void gameFunction(char *nickName, FILE *inFile)
 
 		cls();
 
-	if (letterAccu == wordLength) //ends the loop, ending the game once all letters have been guessed
+	if (letterAccu == wordLength)
 	{
 		break; 
 	}
 	
 	}
 
-	if (userQuit == 1) //if user quits the game early
+	if (userQuit == 1)
 	{
-		printf("\n-------------------------------\n");	
+		cls();
+		printf("\n-------------------------------\n");
 		printf("\nYou have quit the game. The chosen word was: %s\n", guessWords[randIndex]);
 		printf("\nYou scored: %d\n", totalPoints);
 		printf("\n-------------------------------\n");
@@ -274,9 +273,9 @@ void gameFunction(char *nickName, FILE *inFile)
 		getchar();
 		cls();
 	}
-	else if (numbLives == 0) 	//when all lives are lost
+	else if (numbLives == 0)
 	{
-		if (totalPoints < 0)	//keeps score from going below zero
+		if (totalPoints < 0)
 		{
 			totalPoints = 0;
 		}
@@ -301,32 +300,32 @@ void gameFunction(char *nickName, FILE *inFile)
 
 	}
 
-	inFile = fopen("results.txt", "a+");		//creates the file
+	inFile = fopen("results.txt", "a+");
 	
-	fprintf(inFile, "%s\t%d\n", nickName, totalPoints);	//prints nickname and total points to the file
+	fprintf(inFile, "%s\t%d\n", nickName, totalPoints);
 	
-	fclose(inFile);								//closes the file
+	fclose(inFile);
 
 	main();
 
   return;
 }
 
-struct scores 	//structure for displaying scores
+struct scores
 {
-	char dispName[charSIZE];					//display name		
-	int dispScore;								//display score
+	char dispName[charSIZE];	
+	int dispScore;
 
 } displayScores;
 
 void resultsFile(FILE *inFile)
 {
 
-	struct scores displayScores; //allows this function to read from the structure
+	struct scores displayScores;
 
-	inFile = fopen("results.txt", "r");			//opens file for reading
+	inFile = fopen("results.txt", "r");
 
-	if (inFile == NULL)							//check if file exists
+	if (inFile == NULL)
 	{
 		printf("\n---------------------------------------------------------\n");
 		printf("\nNo scores to display yet!\n");
@@ -345,7 +344,7 @@ void resultsFile(FILE *inFile)
 	printf("\nAll scores\n");
 	printf("\n---------------------------------------------------------\n");
 
-	while (fscanf(inFile, "%s\r%d", displayScores.dispName, &displayScores.dispScore) != EOF) //reads values from the file for the listed arguments until the end of the file is reached
+	while (fscanf(inFile, "%s\r%d", displayScores.dispName, &displayScores.dispScore) != EOF)
 	{
 		printf("\nNickname: %s | Score: %d", displayScores.dispName, displayScores.dispScore);
 		printf("\n\n---------------------------------------------------------\n");
