@@ -1,12 +1,3 @@
-/* 
-
-	Laquon Hamilton
-	Final Project
-	2020-04-29 - 2020-05-02
-	Hangman Game
-
-*/
-
 #include <stdio.h>				//user input and output
 #include <stdlib.h>				//for conversions such as rand and srand
 #include <string.h>				//for reading the length of strings
@@ -16,9 +7,19 @@
 void gameFunction(char*, FILE *inFile); //function prototype for game function
 void resultsFile(FILE *inFile);	//function prototype for results file
 
+void cls() {
+
+	#ifdef _WIN32
+		system("cls");
+	#else
+		system("clear");
+	#endif
+		return 0;
+}
+
 int main()
 {
-	system("clear");	//for clearing the console to make things neater, but for visual studio it is "cls" instead of "clear"
+	cls();	//for clearing the console to make things neater, but for visual studio it is "cls" instead of "clear"
 	printf("\nProgram that operates as a hangman game. You will enter a nickname to be stored alongside your score in the scoreboard. Line 121 is where the game master can enter or edit the words to be randomly chosen in the game.\n");
 
 	int menuOption;						//for choosing menu option
@@ -45,7 +46,7 @@ int main()
 			getchar();
 		}			
 		
-		system("clear");
+		cls();
 
 		for (int i = 0; i < strlen(welcomeMsg); i++)	//for printing welcome message
 		{
@@ -82,14 +83,14 @@ int main()
 			getchar();
 		}			
 
-		system("clear");	
+		cls();	
 
 		gameFunction(nickName, inFile);	//call the game function
 
 	}
 	else if (menuOption == 2)
 	{
-		system("clear");
+		cls();
 		resultsFile(inFile); 			//call the results function and sends inFile to it
 	}
 	else if (menuOption == 3)
@@ -105,7 +106,7 @@ int main()
 		{
 			getchar();
 		}			
-		system("clear");
+		cls();
 		main();
 	}
 
@@ -141,7 +142,7 @@ void gameFunction(char *nickName, FILE *inFile)
 		getchar();
 	}			
 
-	system("clear");	
+	cls();	
 	
 	int randIndex = rand() % 6;	//generates a random number which will be used to choose a randon number in the array index
 
@@ -236,7 +237,7 @@ void gameFunction(char *nickName, FILE *inFile)
 			printf("\n-------------------------------\n");	
 			printf("\nPress enter or return to continue... ");
 			getchar();
-			system("clear");
+			cls();
 
 			if (numbLives == 0)	//ends game once all lives are gone
 			{
@@ -251,10 +252,10 @@ void gameFunction(char *nickName, FILE *inFile)
 			printf("\n-------------------------------\n");	
 			printf("\nPress enter or return to continue... ");
 			getchar();
-			system("clear");
+			cls();
 		}
 
-		system("clear");
+		cls();
 
 	if (letterAccu == wordLength) //ends the loop, ending the game once all letters have been guessed
 	{
@@ -271,7 +272,7 @@ void gameFunction(char *nickName, FILE *inFile)
 		printf("\n-------------------------------\n");
 		printf("\nPress enter or return to return to the main menu... ");
 		getchar();
-		system("clear");
+		cls();
 	}
 	else if (numbLives == 0) 	//when all lives are lost
 	{
@@ -286,7 +287,7 @@ void gameFunction(char *nickName, FILE *inFile)
 		printf("\n---------------------------------------------------------\n");
 		printf("\nPress enter or return to return to the main menu... ");
 		getchar();
-		system("clear");
+		cls();
 	}
 	else
 	{
@@ -296,7 +297,7 @@ void gameFunction(char *nickName, FILE *inFile)
 		printf("\n---------------------------------------------------------\n");
 		printf("\nPress enter or return to return to the main menu... ");
 		getchar();
-		system("clear");
+		cls();
 
 	}
 
@@ -337,7 +338,7 @@ void resultsFile(FILE *inFile)
 		{
 			getchar();
 		}
-		system("clear");
+		cls();
 		main();
 	}
 	printf("\n---------------------------------------------------------\n");
@@ -360,7 +361,7 @@ void resultsFile(FILE *inFile)
 		getchar();
 	}
 
-	system("clear");
+	cls();
 	main();
 
 }
